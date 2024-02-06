@@ -1,3 +1,5 @@
+const jwt = require('jsonwebtoken');
+
 class GameService {
     constructor() {
         this.games = []; // This will temporarily store games in memory
@@ -5,13 +7,9 @@ class GameService {
     }
 
     createGame() {
-        const newGame = {
-            id: this.nextId,
-            players: [],
-            status: 'waiting for players', // Initial status of the game
-        };
+        const newGame = new PublicGameInfo(this.nextId);
         this.games.push(newGame);
-        this.nextId++; // Prepare ID for the next game
+        this.nextId++;
         return newGame;
     }
 
@@ -25,8 +23,10 @@ class GameService {
             throw new Error('Player name already exists in the game');
         }
 
+        const token = jwt.sign({ playerName, gameId: id }, process.env.JWT_SECRET);
+
         this.games[id].players.push(playerName);
-        return { success: true, game: this.games[id] };
+        return { success: true, game: this.games[id], token };
 
     }
 

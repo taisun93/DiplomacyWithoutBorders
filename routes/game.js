@@ -27,6 +27,7 @@ router.post('/:id/join/:playerName', async function(req, res) {
         } else if (error.message === 'Player name already exists in the game') {
             res.status(409).send({ message: error.message });
         } else {
+            console.log(error.message)
             res.status(500).send({ message: 'An error occurred while joining the game' });
         }
     }
