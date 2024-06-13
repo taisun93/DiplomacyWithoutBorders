@@ -1,4 +1,6 @@
 const jwt = require('jsonwebtoken');
+import * as gamestate from gamestate.ts
+import { ErrorMessage } from '../models/errorMessage';
 
 class GameService {
     constructor() {
@@ -8,7 +10,7 @@ class GameService {
     }
 
     createGame() {
-        const newGame = new PublicGameInfo(this.nextId);
+        const newGame = gamestate.createGame(this.nextId)
         this.games.push(newGame);
         this.nextId++;
         return newGame;
@@ -17,11 +19,11 @@ class GameService {
     joinGame(id, playerName) {
 
         if (!this.games[id]) {
-            throw new Error('Game not found');
+            throw new Error(ErrorMessage.gameNotFound);
         }
 
         if (this.games[id].players.some(player => player.name === playerName)) {
-            throw new Error('Player name already exists in the game');
+            throw new Error(ErrorMessage.dupePlayer);
         }
 
         const newPlayer = new PublicPlayerInfo(playerName);
@@ -33,25 +35,32 @@ class GameService {
         return { success: true, game: this.games[id], token };
     }
 
-    startGame(gameId) {
-        if (!this.games[gameId]) {
-            throw new Error('Game not found');
-        }
+    // startGame(gameId) {
+    //     if (!this.games[gameId]) {
+    //         throw new Error('Game not found');
+    //     }
 
-        const privateGameInfo = new PrivateGameInfo(this.games[gameId]);
+    //     const privateGameInfo = new PrivateGameInfo(this.games[gameId]);
 
-        this.startedGames.set(gameId, privateGameInfo);
+    //     this.startedGames.set(gameId, privateGameInfo);
 
-        this.games[gameId].gameStarted = true;
+    //     this.games[gameId].gameStarted = true;
 
-        return this.games[gameId];
-    }
+    //     return this.games[gameId];
+    // }
 
-    attackPlayer(gameId, attackerName, targetName) {
+    // //auth
+    // attackPlayer(gameId, attackerName, targetName) {
+    //     this.startedGames.get(this.games[gameId]).queueMove(attackerName, "attack", targetName)
+    // }
 
-    }
+    // //auth
+    // supportPlayer(gameId, supporterName, targetName) {
+
+    //     this.startedGames.get(this.games[gameId]).queueMove(supporterName, "support", targetName)
+    // }
 
 
 }
 
-module.exports = new GameService(); // Export as a singleton
+module.exports = new GameService();

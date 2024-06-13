@@ -1,6 +1,8 @@
 var express = require('express');
 var router = express.Router();
-var gameService = require('../services/gameService');
+// var gameService = require('../services/gameService');
+import gameService from '../services/gameService';
+import { ErrorMessage } from '../models/errorMessage';
 
 /* GET hello world. */
 router.get('/', function(req, res, next) {
@@ -22,9 +24,9 @@ router.post('/:id/join/:playerName', async function(req, res) {
 
         res.status(200).json(result);
     } catch (error) {
-        if (error.message === 'Game not found') {
+        if (error.message === ErrorMessage.gameNotFound) {
             res.status(404).send({ message: error.message });
-        } else if (error.message === 'Player name already exists in the game') {
+        } else if (error.message === ErrorMessage.dupePlayer) {
             res.status(409).send({ message: error.message });
         } else {
             console.log(error.message)
